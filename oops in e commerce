@@ -1,0 +1,97 @@
+# ecommerce.py
+
+class Product:
+    def __init__(self, product_id, name, price, stock):
+        self.product_id = product_id
+        self.name = name
+        self.price = price
+        self.stock = stock
+
+    def update_stock(self, quantity):
+        if quantity <= self.stock:
+            self.stock -= quantity
+            return True
+        return False
+
+    def __str__(self):
+        return f"{self.product_id}: {self.name} - ₹{self.price} (Stock: {self.stock})"
+
+
+class Customer:
+    def __init__(self, customer_id, name):
+        self.customer_id = customer_id
+        self.name = name
+        self.cart = Cart()
+
+    def __str__(self):
+        return f"Customer: {self.name}"
+
+
+class Cart:
+    def __init__(self):
+        self.items = {}
+
+    def add_to_cart(self, product, quantity):
+        if product.product_id in self.items:
+            self.items[product.product_id]['quantity'] += quantity
+        else:
+            self.items[product.product_id] = {'product': product, 'quantity': quantity}
+
+    def view_cart(self):
+        print("🛒 Cart Items:")
+        for item in self.items.values():
+            product = item['product']
+            quantity = item['quantity']
+            print(f"{product.name} - ₹{product.price} x {quantity}")
+
+    def total_price(self):
+        return sum(item['product'].price * item['quantity'] for item in self.items.values())
+
+
+class Order:
+    def __init__(self, customer, cart):
+        self.customer = customer
+        self.cart = cart
+        self.status = "Pending"
+
+    def place_order(self):
+        for item in self.cart.items.values():
+            product = item['product']
+            quantity = item['quantity']
+            if not product.update_stock(quantity):
+                print(f"❌ Not enough stock for {product.name}")
+                return False
+        self.status = "Placed"
+        print("✅ Order placed successfully!")
+        return True
+
+    def view_order_summary(self):
+        print(f"\n📦 Order Summary for {self.customer.name}")
+        self.cart.view_cart()
+        print(f"Total Amount: ₹{self.cart.total_price()}")
+        print(f"Status: {self.status}")
+
+
+
+# This is  Demo Execution
+
+if __name__ == "__main__":
+    # Create Products
+    laptop = Product(1, "Laptop", 60000, 5)
+    mouse = Product(2, "Mouse", 700, 20)
+    keyboard = Product(3, "Keyboard", 1500, 15)
+
+    # Create Customer
+    customer1 = Customer(101, "Yogesh")
+
+    # Add products to cart
+    customer1.cart.add_to_cart(laptop, 1)
+    customer1.cart.add_to_cart(mouse, 2)
+
+    # View cart
+    customer1.cart.view_cart()
+
+    # Place Order
+    order = Order(customer1, customer1.cart)
+    if order.place_order():
+        order.view_order_summary()
