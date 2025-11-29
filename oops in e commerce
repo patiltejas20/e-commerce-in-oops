@@ -95,3 +95,16 @@ if __name__ == "__main__":
     order = Order(customer1, customer1.cart)
     if order.place_order():
         order.view_order_summary()
+
+
+
+
+
+
+
+
+
+
+
+
+
