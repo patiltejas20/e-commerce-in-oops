@@ -96,15 +96,3 @@ if __name__ == "__main__":
     if order.place_order():
         order.view_order_summary()
 
-
-
-
-
-
-
-
-
-
-
-
-
